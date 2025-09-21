@@ -41,7 +41,9 @@ class PerceptronModel(Module):
         """
         super(PerceptronModel, self).__init__()
 
+        # print("dimensions={}".format(dimensions))
         "*** YOUR CODE HERE ***"
+        self.w = Parameter(ones(1, dimensions))
 
 
     def get_weights(self):
@@ -62,7 +64,7 @@ class PerceptronModel(Module):
         """
         "*** YOUR CODE HERE ***"
 
-        
+        return tensordot(x, self.w)
 
     def get_prediction(self, x):
         """
@@ -73,6 +75,9 @@ class PerceptronModel(Module):
         score = self(x)
 
         "*** YOUR CODE HERE ***"
+        if score >= 0:
+            return 1
+        return -1
 
 
 

@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: q1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "autograder.py",
+            "args": [
+                "-q",
+                "q1",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}"
+        },
+    ]
+}

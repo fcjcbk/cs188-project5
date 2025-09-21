@@ -1,5 +1,10 @@
+from cProfile import label
+from sympy import false
 from torch import no_grad
 from torch.utils.data import DataLoader
+import torch
+
+# torch.set_default_device('cuda')
 
 
 """
@@ -29,9 +34,22 @@ def train_perceptron(model, dataset):
     is the item we need to predict based off of its features.
     """
     with no_grad():
-        dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
-        "*** YOUR CODE HERE ***"
-
+        while True:
+            flag = True
+            dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+            "*** YOUR CODE HERE ***"
+            for sample in dataloader:
+                # print(sample)
+                pred = model.get_prediction(sample['x'])
+                # print("pred={}, weight_before={}".format(pred, model.w))
+                if pred == sample['label']:
+                    continue
+                
+                model.w += sample['x'] * (-pred)
+                flag = False
+            if flag:
+                break
+                # print("weight_after={}".format(model.w))
 
 def train_regression(model, dataset):
     """
