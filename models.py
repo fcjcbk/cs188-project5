@@ -1,3 +1,4 @@
+from calendar import c
 from torch import stack, tril
 from torch.nn import Module
 
@@ -12,6 +13,7 @@ from torch.nn import Parameter, Linear
 from torch import tensor, tensordot, ones, matmul, zeros 
 from torch.nn.functional import relu, softmax
 from torch import movedim
+import torch
 
 """
 ##################
@@ -92,7 +94,13 @@ class RegressionModel(Module):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
         super().__init__()
-   
+        # self.a = Parameter(torch.randn(()))
+        # self.b = Parameter(torch.randn(()))
+        # self.c = Parameter(torch.randn(()))
+        # self.d = Parameter(torch.randn(()))
+        # self.e = Parameter(torch.randn(()))
+        self.linear1 = torch.nn.Linear(1, 50)
+        self.linear2 = torch.nn.Linear(50, 1)
 
     def forward(self, x):
         """
@@ -104,8 +112,16 @@ class RegressionModel(Module):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+        # return self.a + self.b * x + self.c * x**2 + self.d * x**3 + self.e * x**4
+        x = torch.relu(self.linear1(x))
+        return self.linear2(x)
 
-
+    def string(self):
+        """
+        Just like any class in Python, you can also define custom method on PyTorch modules
+        """
+        # return f'y = {self.a.item()} + {self.b.item()} x + {self.c.item()} x^2 + {self.d.item()} x^3'
+        return ""
 class DigitClassificationModel(Module):
     """
     A model for handwritten digit classification using the MNIST dataset.

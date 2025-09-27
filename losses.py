@@ -1,4 +1,5 @@
 from torch.nn.functional import mse_loss, cross_entropy
+import torch
 
 def regression_loss(y_pred, y):
     """
@@ -11,6 +12,9 @@ def regression_loss(y_pred, y):
     Returns: a tensor of size 1 containing the loss
     """
     "*** YOUR CODE HERE ***"
+    # loss = torch.square(y_pred - y).mean()
+    loss = torch.nn.MSELoss(reduction='mean')
+    return loss(y_pred, y)
 
 
 

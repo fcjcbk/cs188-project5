@@ -8,7 +8,7 @@
             "program": "autograder.py",
             "args": [
                 "-q",
-                "q1",
+                "q2",
             ],
             "console": "integratedTerminal",
             "justMyCode": false,

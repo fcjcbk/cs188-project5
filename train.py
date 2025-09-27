@@ -68,6 +68,41 @@ def train_regression(model, dataset):
     """
     "*** YOUR CODE HERE ***"
 
+    # model = torch.nn.Sequential(
+    #     torch.nn.Linear(4, 1),
+    #     # torch.nn.ReLU()
+    #     torch.nn.Flatten(0, 1)
+    # )
+    dataloader = DataLoader(dataset, batch_size=1000, shuffle=True)
+
+    learning_rate = 1e-4
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    max_loss = 1000
+
+    for i in range(200000):
+        max_loss = 0
+        for s in dataloader:
+            # print(s)
+            # Forward pass: Compute predicted y by passing x to the model
+            y_pred = model(s['x'])
+            y = s['label']
+
+            # Compute and print loss
+            loss = regression_loss(y_pred, y)
+            max_loss = max(loss, max_loss)
+
+            # Zero gradients, perform a backward pass, and update the weights.
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        if i % 100 == 99:
+            print(i, max_loss)
+        if max_loss <= 0.02:
+            break
+
+
+
 
 def train_digitclassifier(model, dataset):
     """
