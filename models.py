@@ -143,7 +143,8 @@ class DigitClassificationModel(Module):
         input_size = 28 * 28
         output_size = 10
         "*** YOUR CODE HERE ***"
-
+        self.linear1 = torch.nn.Linear(input_size, input_size * 2)
+        self.linear2 = torch.nn.Linear(input_size * 2, output_size)
 
     def forward(self, x):
         """
@@ -160,6 +161,8 @@ class DigitClassificationModel(Module):
                 (also called logits)
         """
         """ YOUR CODE HERE """
+        f1 = torch.relu(self.linear1(x))
+        return self.linear2(f1)
 
 
 

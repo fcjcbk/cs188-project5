@@ -32,6 +32,8 @@ def digitclassifier_loss(y_pred, y):
     Returns: a loss tensor
     """
     """ YOUR CODE HERE """
+    loss = torch.nn.CrossEntropyLoss()
+    return loss(y_pred, y)
 
 
 def languageid_loss(y_pred, y):

@@ -1,5 +1,5 @@
 from cProfile import label
-from sympy import false
+from sympy import false, print_glsl
 from torch import no_grad
 from torch.utils.data import DataLoader
 import torch
@@ -110,6 +110,30 @@ def train_digitclassifier(model, dataset):
     """
     model.train()
     """ YOUR CODE HERE """
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=True)
+
+    learning_rate = 1e-4
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    for i in range(200000):
+        for s in dataloader:
+            # print(s)
+            # Forward pass: Compute predicted y by passing x to the model
+            y_pred = model(s['x'])
+            y = s['label']
+
+            # Compute and print loss
+            loss = digitclassifier_loss(y_pred, y)
+
+            # Zero gradients, perform a backward pass, and update the weights.
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        accuary = dataset.get_validation_accuracy()
+        if i % 99:
+            print(accuary)
+        if accuary >= 0.98:
+            break    
 
 
 def train_languageid(model, dataset):
