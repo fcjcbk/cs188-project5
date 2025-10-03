@@ -51,6 +51,8 @@ def languageid_loss(y_pred, y):
     Returns: a loss node
     """
     "*** YOUR CODE HERE ***"
+    loss = torch.nn.CrossEntropyLoss()
+    return loss(y_pred, y)
 
 
 def digitconvolution_Loss(y_pred, y):

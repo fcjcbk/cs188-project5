@@ -152,6 +152,33 @@ def train_languageid(model, dataset):
     """
     model.train()
     "*** YOUR CODE HERE ***"
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=True)
+
+    learning_rate = 1e-5
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    for i in range(1000):
+        for s in dataloader:
+            # print(s)
+            # Forward pass: Compute predicted y by passing x to the model
+            y_pred = model(s['x'])
+            y = s['label']
+            # print("i={}, y_pred={}, y={}".format(i, y_pred, y))
+            # print(f"y_pred shape: {y_pred.shape}")  # Debug 
+            # print(f"y shape: {y.shape}")            # Debug
+
+            # Compute and print loss
+            loss = languageid_loss(y_pred, y)
+
+            # Zero gradients, perform a backward pass, and update the weights.
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        accuary = dataset.get_validation_accuracy()
+        if accuary >= 0.81:
+            break
+        if i % 99:
+            print("i={}, accuray={}".format(i, accuary))
 
 
 
