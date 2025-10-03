@@ -3,6 +3,7 @@ from sympy import false, print_glsl
 from torch import no_grad
 from torch.utils.data import DataLoader
 import torch
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # torch.set_default_device('cuda')
 
@@ -152,7 +153,52 @@ def train_languageid(model, dataset):
     """
     model.train()
     "*** YOUR CODE HERE ***"
+    dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
 
+    learning_rate = 1e-3
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    # 创建调度器 - 监控验证准确率
+    scheduler = ReduceLROnPlateau(
+        optimizer, 
+        mode='max',      # 准确率越大越好
+        patience=5,      # 5轮无改善就衰减
+        factor=0.5,      # 学习率减半
+        min_lr=1e-5
+    )
+
+    for i in range(200):
+        m_loss = 0
+        for s in dataloader:
+            # print("s={}, x={}, y={}".format(s, s['x'].shape, s['label'].shape))
+
+            # print(s)
+            # Forward pass: Compute predicted y by passing x to the model
+
+            xs = movedim(s['x'], 1, 0)
+            y_pred = model(xs)
+            y = s['label']
+            # print("i={}, y_pred={}, y={}".format(i, y_pred, y))
+            # print(f"y_pred shape: {y_pred.shape}")  # Debug 
+            # print(f"y shape: {y.shape}")            # Debug
+
+            # Compute and print loss
+            loss = languageid_loss(y_pred, y)
+            m_loss = max(loss, m_loss)
+
+            # Zero gradients, perform a backward pass, and update the weights.
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        accuary = dataset.get_validation_accuracy()
+        
+        scheduler.step(accuary)  # 传入监控的指标值
+        current_lr = optimizer.param_groups[0]['lr']
+        if i % 99:
+            print("i={}, accuray={}, loss={}, lr={}".format(i, accuary, m_loss, current_lr))
+
+        if accuary >= 0.81:
+            break
 
 
 def Train_DigitConvolution(model, dataset):

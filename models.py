@@ -185,6 +185,13 @@ class LanguageIDModel(Module):
         super(LanguageIDModel, self).__init__()
         "*** YOUR CODE HERE ***"
         # Initialize your model parameters here
+        # h_t = tanh(W_ih * x_t + b_ih + W_hh * h_{t-1} + b_hh)
+
+        self.hiden_size = 512
+
+        self.wx = torch.nn.Linear(self.num_chars, self.hiden_size)
+        self.wh = torch.nn.Linear(self.hiden_size, self.hiden_size)
+        self.output = torch.nn.Linear(self.hiden_size, out_features=5)
 
 
 
@@ -218,6 +225,13 @@ class LanguageIDModel(Module):
                 (also called logits)
         """
         "*** YOUR CODE HERE ***"
+        batch_size = xs[0].size(dim=0)
+        prev_h = torch.zeros(batch_size, self.hiden_size)
+        for x in xs:
+            h = torch.relu(self.wx(x) + self.wh(prev_h))
+            prev_h = h
+        return self.output(prev_h)
+
 
 
 
