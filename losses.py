@@ -69,4 +69,6 @@ def digitconvolution_Loss(y_pred, y):
     Returns: a loss tensor
     """
     """ YOUR CODE HERE """
+    loss = torch.nn.CrossEntropyLoss()
+    return loss(y_pred, y)
     

@@ -132,7 +132,7 @@ def train_digitclassifier(model, dataset):
             optimizer.step()
         accuary = dataset.get_validation_accuracy()
         if i % 99:
-            print(accuary)
+            print("i={}, accuarcy={}".format(i, accuary))
         if accuary >= 0.98:
             break    
 
@@ -206,3 +206,29 @@ def Train_DigitConvolution(model, dataset):
     Trains the model.
     """
     """ YOUR CODE HERE """
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=True)
+
+    learning_rate = 1e-4
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+    for i in range(50):
+        m_loss = 0
+        for s in dataloader:
+            # print(s)
+            # Forward pass: Compute predicted y by passing x to the model
+            y_pred = model(s['x'])
+            y = s['label']
+
+            # Compute and print loss
+            loss = digitconvolution_Loss(y_pred, y)
+            m_loss = max(m_loss, loss)
+
+            # Zero gradients, perform a backward pass, and update the weights.
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        accuary = dataset.get_validation_accuracy()
+        if i % 99:
+            print("i={}, accuarcy={}, loss={}".format(i, accuary, loss))
+        if accuary >= 0.98:
+            break    

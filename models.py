@@ -255,7 +255,19 @@ def Convolve(input: tensor, weight: tensor):
     weight_dimensions = weight.shape
     Output_Tensor = tensor(())
     "*** YOUR CODE HERE ***"
+    a = input_tensor_dimensions[0] - weight_dimensions[0] + 1
+    b = input_tensor_dimensions[1] - weight_dimensions[1] + 1
 
+    height = weight_dimensions[0]
+    width = weight_dimensions[1]
+
+    Output_Tensor = zeros(a, b)
+
+    # print("a={}, b={}, height={}, width={}".format(a, b, height, width))
+    # print(input_tensor_dimensions, weight)
+    for i in range(a):
+        for j in range(b):
+            Output_Tensor[i][j] = tensordot(input[i:i+height, j:j+width], weight)
     "*** End Code ***"
     return Output_Tensor
 
@@ -276,9 +288,12 @@ class DigitConvolutionalModel(Module):
         # Initialize your model parameters here
         super().__init__()
         output_size = 10
-
+        input_size = 26 * 26
         self.convolution_weights = Parameter(ones((3, 3)))
         """ YOUR CODE HERE """
+        self.linear1 = torch.nn.Linear(input_size, input_size * 2)
+        self.linear2 = torch.nn.Linear(input_size * 2, output_size)
+
 
 
     def forward(self, x):
@@ -292,7 +307,8 @@ class DigitConvolutionalModel(Module):
         )
         x = x.flatten(start_dim=1)
         """ YOUR CODE HERE """
-
+        f1 = torch.relu(self.linear1(x))
+        return self.linear2(f1)
 
 class Attention(Module):
     def __init__(self, layer_size, block_size):
