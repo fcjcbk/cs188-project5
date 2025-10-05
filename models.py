@@ -14,6 +14,7 @@ from torch import tensor, tensordot, ones, matmul, zeros
 from torch.nn.functional import relu, softmax
 from torch import movedim
 import torch
+import math
 
 """
 ##################
@@ -347,4 +348,10 @@ class Attention(Module):
         B, T, C = input.size()
 
         """YOUR CODE HERE"""
-
+        Q = self.q_layer(input)
+        K = self.k_layer(input)
+        V = self.v_layer(input)
+        K_t = movedim(K, 2, 1)
+        mask = (matmul(Q, K_t) /  math.sqrt(self.layer_size)).masked_fill(self.mask[:,:,:T,:T] == 0, float('-inf'))[0]
+        
+        return matmul(softmax(mask, dim=-1), V)
