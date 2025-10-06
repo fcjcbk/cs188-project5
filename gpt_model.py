@@ -35,7 +35,13 @@ class Transformer_Block(nn.Module):
 
     def forward(self, x):
         """YOUR CODE HERE"""
-     
+        attn_output = self.attn_block(x)
+        sum_input_and_attn_output = attn_output + x
+        norm1 = self.norm_1(sum_input_and_attn_output)
+        liner_result = torch.relu(self.linear_1(norm1))
+        sum2 = liner_result + norm1
+        return self.norm_2(sum2)
+
        
 
 class Character_GPT(nn.Module):
@@ -69,6 +75,12 @@ class Character_GPT(nn.Module):
         assert t <= self.block_size, f"Cannot forward sequence of length {t}, block size is only {self.block_size}"
 
         """YOUR CODE HERE"""
+        x = self.embed(input)
+        for layer in self.transformer_blocks:
+            x = layer(x)
+
+        return self.output_layer(self.norm(x))
+
        
     @torch.no_grad()
     def generate(self, idx, max_new_tokens):

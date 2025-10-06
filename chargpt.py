@@ -70,8 +70,8 @@ if __name__ == '__main__':
     batch_size = 500 
     checkpoint = 100 #How often to print out results of the model during training
     context = "Pacman" #Generative prompt
-    layer_size = 100
-    n_layer = 6 #How many transformer blocks to have
+    layer_size = 500
+    n_layer = 12 #How many transformer blocks to have
 
 
     # construct the training dataset
