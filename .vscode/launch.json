@@ -14,5 +14,16 @@
             "justMyCode": false,
             "cwd": "${workspaceFolder}"
         },
+                {
+            "name": "chargpt",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "chargpt.py",
+            "args": [
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }

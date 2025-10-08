@@ -14,6 +14,8 @@ from torch.utils.data.dataloader import DataLoader
 
 from gpt_model import Character_GPT
 
+# torch.set_default_device("cuda")
+device = torch.device('cuda')
 
 
 class CharDataset(Dataset):
@@ -38,8 +40,8 @@ class CharDataset(Dataset):
         # encode every character to an integer
         dix = [self.char2index[s] for s in chunk]
         # return as tensors
-        x = torch.tensor(dix[:-1], dtype=torch.long)
-        y = torch.tensor(dix[1:],dtype=torch.long)
+        x = torch.tensor(dix[:-1], dtype=torch.long).to(device)
+        y = torch.tensor(dix[1:],dtype=torch.long).to(device)
         return x, y
 
 
@@ -52,6 +54,9 @@ def train_single_iteration(model, data_iter):
         batch = next(data_iter)
     batch = [t for t in batch]
     x, y = batch
+
+    x = x.to(device)
+    y = y.to(device)
 
     # forward the model
     loss = model.get_loss(x, y)
@@ -68,9 +73,9 @@ if __name__ == '__main__':
     learning_rate = 0.0004
     num_iterations = 10000
     batch_size = 500 
-    checkpoint = 100 #How often to print out results of the model during training
+    checkpoint = 500 #How often to print out results of the model during training
     context = "Pacman" #Generative prompt
-    layer_size = 500
+    layer_size = 1024
     n_layer = 12 #How many transformer blocks to have
 
 
@@ -83,15 +88,15 @@ if __name__ == '__main__':
         train_dataset,
         sampler=torch.utils.data.RandomSampler(train_dataset, replacement=True, num_samples=int(1e10)),
         shuffle=False,
-        pin_memory=True,
+        # pin_memory=True,
         batch_size=batch_size,
-        num_workers=1,
+        # num_workers=1,
     )
 
     train_iterations = iter(train_loader)
 
     #set up model and optimizer
-    model = Character_GPT(train_dataset.block_size, n_embd=layer_size, n_layer=n_layer, vocab_size=train_dataset.vocab_size)
+    model = Character_GPT(train_dataset.block_size, n_embd=layer_size, n_layer=n_layer, vocab_size=train_dataset.vocab_size).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.00004)
 
 
@@ -105,7 +110,7 @@ if __name__ == '__main__':
                 # sample from the model...
                 print("Prompt: " + context)
                 print("Generated result: ")
-                x = torch.tensor([train_dataset.char2index[s] for s in context])[None,...]
+                x = torch.tensor([train_dataset.char2index[s] for s in context])[None,...].to(device)
                 y = model.generate(x, 500)[0]
                 completion = ''.join([train_dataset.index2char[int(i)] for i in y])
                 print(completion + "\n")
